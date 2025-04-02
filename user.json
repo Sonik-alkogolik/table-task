@@ -1,0 +1,9 @@
+[
+    {
+        "id": 1,
+        "selectedPhotos": [
+            "https:\/\/api.slingacademy.com\/public\/sample-photos\/1.jpeg",
+            "https:\/\/api.slingacademy.com\/public\/sample-photos\/2.jpeg"
+        ]
+    }
+]
