@@ -76,26 +76,28 @@
                     </div>
                 </div>
             </div>
-            <template>
-                <div class="wrapper user">
-                    <template v-if="hasPhotos">
-                        <div v-for="data_user in dataRead" :key="data_user.id">
-                            <p>{{ data_user.id }}</p>
-                            <button @click="deleteItem(data_user.id)">Удалить x</button>
-                            <img v-for="(selectedPhoto, index) in data_user.selectedPhotos" :src="selectedPhoto"
-                                :key="index" />
-                        </div>
-                    </template>
-
-                    <template v-else>
-                        <div v-for="user in users" :key="user.id">
-                            <button>{{ user.name }}</button>
-                            <img v-for="(selectedPhoto, index) in user.selectedPhotos" :src="selectedPhoto"
-                                :key="index" />
-                        </div>
-                    </template>
+            <div class="wrapper user">
+                <div v-if="hasPhotos">
+                  <div v-for="data_user in dataRead" :key="data_user.id">
+                    <p>{{ data_user.id }}</p>
+                    <button @click="deleteItem(data_user.id)">Удалить x</button>
+                    <img v-for="(selectedPhoto, index) in data_user.selectedPhotos" 
+                         :src="selectedPhoto"
+                         :key="index" />
+                  </div>
                 </div>
-            </template>
+              
+                <div v-else>
+                  <div v-for="user in users" :key="user.id">
+                    <button
+                    @click ="user_active = user.id"
+                     >{{ user.name }}</button>
+                    <img v-for="(selectedPhoto, index) in user.selectedPhotos" 
+                         :src="selectedPhoto"
+                         :key="index" />
+                  </div>
+                </div>
+              </div>
         </div>
     </div>
 
@@ -124,7 +126,9 @@
             },
             computed: {
                 hasPhotos() {
-                    return this.users.some(user => user.selectedPhotos.length > 0);
+                    return this.dataRead && this.dataRead.some(user => 
+                    user.selectedPhotos && user.selectedPhotos.length > 0
+                    );
                 }
             },
             methods: {
