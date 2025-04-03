@@ -7,6 +7,7 @@ $dataFile = 'user.json';
 $input = json_decode(file_get_contents('php://input'), true);
 $action = $input['action'] ?? '';
 
+
 function readData() {
     global $dataFile;
     if (!file_exists($dataFile)) {
@@ -48,12 +49,32 @@ function updateData($input) {
     echo json_encode(['success' => true]);
 }
 
+function deleteItem($input) {
+    global $dataFile;
+    if ($input['action'] === 'delete') {         
+        $userId = $input['userId'];         
+        $data = json_decode(file_get_contents($dataFile), true);         
+    
+        foreach ($data as $index => $user) {         
+            if ($user['id'] == $userId) {          
+                array_shift($data[$index]['selectedPhotos']); 
+                break;        
+            }        
+        }         
+    
+        file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    }
+}
+
 switch ($action) {
     case 'read':
         readData();
         break;
     case 'update':
         updateData($input);
+        break;
+    case 'delete':
+        deleteItem($input);
         break;
     default:
         echo json_encode(['error' => 'Unknown action']);
