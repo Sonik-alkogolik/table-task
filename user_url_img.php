@@ -57,12 +57,26 @@ function deleteItem($input) {
     
         foreach ($data as $index => $user) {         
             if ($user['id'] == $userId) {          
-                array_shift($data[$index]['selectedPhotos']); 
-                break;        
+                array_shift($data[$index]['selectedPhotos']);   
             }        
         }         
     
-        file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        if (is_writable($dataFile)) {
+            file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+            // echo "Файл доступен для записи!";
+        } else {
+            // echo "Ошибка: Нет прав на запись!";
+        }
+       
+        // echo json_encode([
+        //     'status' => 'success',
+        //     'deleted' => $deletedItem,
+        //     'debug' => [
+        //         'user_id' => $input['userId'],
+        //         'remaining_photos' => $data[$index]['selectedPhotos'] ?? []
+        //     ]
+        // ]);
+        // return;
     }
 }
 
