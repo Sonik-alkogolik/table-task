@@ -1,0 +1,341 @@
+{
+    "payment_methods": {     
+        "usdt": [
+            {
+                "id": "total",
+                "title": "Сумма платежа",
+                "type": "text",
+                "required": true
+            }
+        ],
+        "swift": [
+            {
+                "id": "currency",
+                "title": "Валюта перевода",
+                "type": "choice",
+                "required": true,
+                "items": [
+                    {
+                        "id": "rub",
+                        "value": "RUB"
+                    },
+                    {
+                        "id": "usd",
+                        "value": "USD"
+                    },
+                    {
+                        "id": "eur",
+                        "value": "EUR"
+                    },
+                    {
+                        "id": "cny",
+                        "value": "CNY"
+                    },
+                    {
+                        "id": "other",
+                        "value": "Другое",
+                        "input_field": {
+                            "type": "text",
+                            "placeholder": "Укажите валюту",
+                            "required_if_selected": true
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "total",
+                "title": "Сумма платежа",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "country",
+                "title": "Страна",
+                "type": "choice",
+                "required": true,
+                "items": [
+                    {
+                        "id": "de",
+                        "value": "Германия"
+                    },
+                    {
+                        "id": "cn",
+                        "value": "Китай"
+                    },
+                    {
+                        "id": "us",
+                        "value": "США"
+                    },
+                    {
+                        "id": "other",
+                        "value": "Другое",
+                        "input_field": {
+                            "type": "text",
+                            "placeholder": "Укажите страну",
+                            "required_if_selected": true
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "payment_purpose",
+                "title": "Назначение",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "payment_method",
+                "title": "Я отдаю",
+                "type": "choice",
+                "required": true,
+                "items": [
+                    {
+                        "id": "cash_rub",
+                        "value": "Наличный руб"
+                    },
+                    {
+                        "id": "noncash_rub",
+                        "value": "Безналичный руб"
+                    },
+                    {
+                        "id": "cash_currency",
+                        "value": "Наличная валюта"
+                    },
+                    {
+                        "id": "noncash_currency",
+                        "value": "Безналичная валюта"
+                    },
+                    {
+                        "id": "usdt",
+                        "value": "USDT"
+                    }
+                ]
+            },
+            {
+                "id": "messanger",
+                "title": "Контакт в телеграм или вотсап",
+                "type": "text",
+                "required": false,
+                "hide_for_client": true
+            }
+        ]
+    },
+    "providers": {
+        "osbi": [
+            {
+                "id": "total",
+                "title": "Сумма платежа",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "currency",
+                "title": "Валюта платежа",
+                "type": "choice",
+                "required": true,
+                "items": [
+                    {
+                        "id": "cny",
+                        "value": "CNY"
+                    },
+                    {
+                        "id": "eur",
+                        "value": "EUR"
+                    },
+                    {
+                        "id": "usd",
+                        "value": "USD"
+                    }
+                ]
+            },
+            {
+                "id": "beneficiary_bank_name",
+                "title": "Наименование банка бенефициара",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_bank_country",
+                "title": "Страна банка бенефициара",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_bank_address",
+                "title": "Город, улица, дом и офис банка бенефициара",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_bank_account_number",
+                "title": "Номер счета",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_bank_swift",
+                "title": "SWIFT банка",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_name",
+                "title": "Бенефициар (получатель)",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_country",
+                "title": "Страна бенефициара",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_address",
+                "title": "Город, улица, дом и офис бенефициара",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "payment_purpose",
+                "title": "Назначение платежа",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "сontract",
+                "title": "Сontract",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_name",
+                "title": "Наименование коррбанка",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_country",
+                "title": "Страна коррбанка",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_address",
+                "title": "Город, улица, дом и офис коррбанка",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_swift",
+                "title": "SWIFT коррбанка",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_account_number",
+                "title": "Счет банка в банке-кореспонденте",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_structure",
+                "title": "Струткура бенефиарного владения получателя: ФИО, дата рождения, гражданство, место рождения, адрес проживания, дола владения (полное наименование юр.лица, рег. номер, адрес)",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "recipient_company_website",
+                "title": "Вид деятельности компании получателя (сайт)",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "recipient_company_license",
+                "title": "Рег. Номер, Номер лицензии компании получателя",
+                "type": "text",
+                "required": true
+            }
+        ],
+        "tess": [
+            {
+                "id": "beneficiary_bank_name",
+                "title": "Банк получателя",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_code_bank",
+                "title": "Код банка получателя (SWIFT)",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_address",
+                "title": "Адресс получателя",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_name",
+                "title": "Получатель",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_addres",
+                "title": "Адрес получателя",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "beneficiary_account",
+                "title": "Счёт получателя",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_name",
+                "title": "Банк посредник",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "intermediary_bank_code",
+                "title": "Код банка-посредника",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "details_payment",
+                "title": "Реквизиты для оплаты",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "total",
+                "title": "сумма",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "hs_code",
+                "title": "Код ТН ВЭД",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "contract_date_and_number",
+                "title": "Дата и номер контракта",
+                "type": "text",
+                "required": true
+            },
+            {
+                "id": "additional_information",
+                "title": "Дополнительная информация",
+                "type": "text",
+                "required": true
+            }
+        ]
+    }
+}

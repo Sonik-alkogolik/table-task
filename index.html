@@ -4,178 +4,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue Gallery App</title>
+    <title>Vue App</title>
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    
 </head>
 
 <body>
-    <div id="app">
-        <div class="wrapper-row">
-            <div class="wrapper img">
-                <div class="row-item" v-for="photo_url in PhotosUrl" :key="photo_url.url">
-                    <img :src="photo_url.url" :alt="photo_url.description" @click="selectedPhotos(photo_url)" />
-                    <div class="item-deskription">
-                        <span>id:{{ photo_url.id }}</span>
-                        <p>{{ photo_url.description }}</p>
+    <div id="app" class="container mt-4">
+        <button @click="add_item" class="btn btn-primary mb-3">
+            Добавить запись
+        </button>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">User</th>
+                        <th scope="col">Providers</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Data Update</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in ReadTable.data" :key="item.id">
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.user }}</td>
+                        <td>{{ item.providers }}</td>
+                        <td>{{ item.data }}</td>
+                        <td>{{ item.dataupdate }}
+                            <button @click="edit(item.id)" class="btn btn-primary">
+                               edit
+                           </button>
+                           <button @click="deleteItem(item.id)" class="btn btn-danger">
+                            delete
+                        </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <form ref="myForm" class="card mt-4 p-3 bg-light">
+            <div class="card-body">
+              <div class="form-group mb-3">
+                <label class="form-label">Имя:</label>
+                <input  type="text" v-model="name" name="name" class="form-control">
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label">Метод оплаты:</label>
+                <select 
+                  class="form-select" 
+                  v-model="selectedPaymentMethod" 
+                  name="payment_method"
+                >
+                  <option v-for="(item, key) in data_add_item.payment_methods" :key="key" :value="key">
+                    {{ key }}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group mb-3" v-if="selectedPaymentMethod">
+                <div 
+                  v-for="(item_select, key) in data_add_item.payment_methods[selectedPaymentMethod]" 
+                  :key="key"
+                >
+                  {{ item_select.title }}
+                  <div v-if="item_select.type == 'choice'">
+                    <select :name="item_select.id">
+                      <option v-for="item in item_select.items" :key="item.id" :value="item.value">
+                        {{ item.value }}
+                      </option>
+                    </select>
+                    <div v-if="item_select.input_field">
+                      <input :name="item_select.id" type="text">
                     </div>
-                </div>
-            </div>
-            <div class="wrapper user">
-                <button  class="btn" @click="hardReload">Обновить</button>
-                <div v-if="hasPhotos">
-                  <div v-for="data_user in dataRead" :key="data_user.id" class="btn-column">
-                    <p>{{ data_user.id }}</p>
-                  
-                     <button  class="btn btn-primary"
-                       @click="deleteItem(data_user.id)"
-                       >
-                       Удалить x
-                      </button>
-                      <img v-for="(selectedPhoto, index) in data_user.selectedPhotos" 
-                         :src="selectedPhoto"
-                         :key="index" 
-                       />
                   </div>
-                </div>
-              
-                <div v-else>
-                  <div v-for="user in users" :key="user.id" class="btn-column">
-                    <button 
-                        @click="user_active = user.id"
-                        class="btn"
-                        :class="user_active === user.id ? 'btn-primary' : 'btn-outline-primary'"
-                    >
-                      {{ user.name }}
-                  </button>
-                    <img v-for="(selectedPhoto, index) in user.selectedPhotos" 
-                         :src="selectedPhoto"
-                         :key="index" />
+                  <div v-else-if="item_select.type == 'text'">
+                    <input v-model="product_fileds[item_select.id]" :name="item_select.id" type="text">
                   </div>
                 </div>
               </div>
+            </div>
+            <button type="button" @click="FormData" class="btn btn-primary">
+              Отправить
+            </button>
+          </form>
+
+          <!-- Форма редактирования -->
+        <div class="modal">
+               <form class="card p-3"  v-if="selectedEditItem.data">
+                   <h3 v-if="selectedEditItem.data">
+                    Редактировать запись ID: {{ selectedEditItem.data.id }}
+                  </h3>
+                  <div class="form-group mb-3" v-if="selectedEditItem.data">
+                    <label class="form-label">Имя:{{ selectedEditItem.data.user }}</label>
+                    <input  type="text" v-model="selectedEditItem.data.user" name="name" class="form-control">
+                  </div>  
+                  <div class="form-group mb-3">
+                    <label class="form-label">Метод оплаты:</label>
+                    <select class="form-select" v-model="selectedEditItem.data.providers" name="payment_method">
+                        <option>
+                          {{ selectedEditItem.data.providers }}
+                        </option>
+                      </select>
+                  </div>
+                  <div class="form-group mb-3">
+                    {{ selectedEditItem.data.product_fileds }}
+                    <div 
+                      v-for="(item_select, key) in selectedEditItem.data.product_fileds.total" 
+                      :key="key"
+                    >
+                      {{ key }}
+                    </div>
+                  </div>
+                  
+                <button type="submit" class="btn btn-success">Сохранить</button>
+                <button @click="selectedEditItem = null" class="btn btn-danger">Отмена</button>
+            </form>
         </div>
     </div>
-
     <script>
         const { createApp } = Vue;
-
+        
         createApp({
             data() {
                 return {
-                    dataRead: [],
-                    photosID: [],
-                    // deleteItemFilter: [],
-                    postitemsphotos: {},
-                    PhotosUrl: [],
-                    users: [
-                        { id: 1, name: "User 1", selectedPhotos: [] },
-                        { id: 2, name: "User 2", selectedPhotos: [] },
-                    ],
-                    user_active: null,
+                    ReadTable: {},
+                    data_add_item: [],
+                    selectedPaymentMethod: null,
+                    selectPaymentType: null,
+                    payment_methods: {},
+                    product_fileds:[],
+                    formData: {},
+                    full_data:{},
+                    name: '',
+                    selectedEditItem: {},
                 };
             },
             async mounted() {
-                await this.requestApi();
-                await this.ReadUser();
-
-            },
-            computed: {
-                hasPhotos() {
-                    return this.dataRead && this.dataRead.some(user => 
-                    user.selectedPhotos && user.selectedPhotos.length > 0
-                    );
-                }
+                await this.read();
+                await this.form_item();
             },
             methods: {
-                async requestApi() {
+                async read() {
                     try {
-                        const response = await fetch("/galery.json");
-                        this.postitemsphotos = await response.json();
-                        this.PhotosUrl = this.postitemsphotos.photos;
-                    } catch (error) {
-                        console.error("Ошибка загрузки:", error);
-                    }
-                },
-                async selectedPhotos(selectedPhoto) {
-                    if (!this.user_active) {
-                        alert("Выберите пользователя");
-                        return;
-                    }
-
-                    const user = this.users.find(u => u.id === this.user_active);
-                    if (user && !user.selectedPhotos.includes(selectedPhoto.url)) {
-                        user.selectedPhotos.push(selectedPhoto.url);
-                    }
-
-                    try {
-                        const response = await fetch('/user_url_img.php', {
+                        const response = await fetch('/function.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                action: 'update',
-                                userId: this.user_active,
-                                url: selectedPhoto.url
-                            })
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                            
-                        // window.location.reload();
-                        console.log('Данные успешно сохранены');
-                    } catch (error) {
-                        console.error('Ошибка сохранения:', error);
-                    }
-                },
-                async ReadUser() {
-                    try {
-                        const response = await fetch('/user_url_img.php', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                action: 'read',
+                            body: JSON.stringify({ 
+                                action: 'readData' 
                             }),
                         });
-                        this.dataRead = await response.json();
-                        //console.log(dataRead);
-
-
+                        this.ReadTable = await response.json();
+                        //console.log(this.ReadTable);
                     } catch (error) {
                         console.error('Ошибка чтения:', error);
                     }
-
                 },
-                async deleteItem(userId) {
+                
+                async form_item() {
                     try {
-                        const responseDelete = await fetch('/user_url_img.php', {
+                        const response = await fetch('/products_fields.json', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                        });
+                        this.data_add_item = await response.json();
+                       //console.log(this.data_add_item);
+                        
+                    } catch (error) {
+                        console.error('Ошибка чтения:', error);
+                    }
+                },
+                
+                FormData() {
+                    const formData = new FormData(this.$refs.myForm);
+                    this.formData = {}; 
+                    
+                    formData.forEach((value, key) => {
+                        this.formData[key] = value;
+                    });
+                    console.log(this.formData);
+                    
+                    
+                    if (this.selectedPaymentMethod) {
+                        this.formData.payment_method = this.selectedPaymentMethod;
+                    }
+                    if (this.formData.country) {
+                        this.product_fileds.country = this.formData.country;
+                    }
+                    if (this.formData.currency) {
+                        this.product_fileds.currency = this.formData.currency;
+                    }
+                    if (this.formData.messanger) {
+                        this.product_fileds.messanger = this.formData.messanger;
+                    }
+                    this.formData.product_fileds = { ...this.product_fileds };
+
+                    console.log('Данные формы:', this.formData);
+                    this.create();
+                },
+                
+                async create() {
+                    try {
+                        if (!this.formData.name) {
+                            throw new Error('Поле "name" обязательно для заполнения');
+                        }
+                        
+                        const response = await fetch('/function.php', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                action: 'delete',
-                                userId: userId,
-                            }),
+                                action: 'create',
+                                name: this.formData.name,
+                                payment_method: this.formData.payment_method,
+                                full_data: this.formData
+                             })
                         });
                         window.location.reload();
-
-                        // this.deleteItemFilter = await responseDelete.json();
-                        // console.log( this.deleteItemFilter);
+                        // const result = await response.json();
+                        // console.log('Ответ сервера:', result);
+                         //return result;
                         
-
-                        //this.dataRead = await response.json();
                     } catch (error) {
-                        console.error('Ошибка чтения:', error);
+                        console.error('Ошибка отправки:', error);
+                        alert('Ошибка: ' + error.message);
+                        throw error;
                     }
                 },
-                hardReload() {
-                     window.location.reload()
-                }
+                async edit(id) {
+                  const response = await fetch('/function.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'edit',
+                            id: id,
+                        })
+                     });
 
+                     const data_edit_item = await response.json();
+                     //console.log(data_edit_item);
+                     this.selectedEditItem = data_edit_item;  
+                    //console.log(this.selectedEditItem);
+                     
+                    // this.selectedEditItem = this.ReadTable.data.find(item => item.id === id);
+                    // // this.selectedEditItem.product_fileds.country = data.country || '';
+                    // // this.selectedEditItem.product_fileds.currency = data.currency || '';
+                    // // this.selectedEditItem.product_fileds.messanger = data.messanger || '';
+
+                    // console.log('Selected item:', this.selectedEditItem);
+                },
+                async updateItem() {
+                    try {
+                        const response = await fetch('/function.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'update',
+                            id: this.selectedEditItem.id,
+                            data: this.selectedEditItem
+                        })
+                        });
+                        
+                        if (!response.ok) throw new Error('Ошибка обновления');
+                        await this.read(); // Обновить список данных
+                        this.selectedEditItem = null; // Закрыть форму
+                        
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        alert(error.message);
+                    }
+                },
+               async deleteItem(id) {
+                    if (confirm('Вы уверены, что хотите удалить запись?')) {
+                        try {
+                        const response = await fetch('/function.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'delete',
+                            id: id,
+                        })
+                     });
+                     window.location.reload();
+
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        alert(error.message);
+                    }
+                 }
+                }
             }
         }).mount('#app');
-    </script>
+        </script>
+
+    <style>
+        .card {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        input[type="text"] {
+            display: block;
+            width: -webkit-fill-available;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-image: none;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus {
+            color: #495057;
+            background-color: #fff;
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* Стили для select */
+        select {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-image: none;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        /* Стили для option */
+        option {
+            padding: 0.5rem;
+            color: #212529;
+            background-color: #fff;
+        }
+
+        option:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        option:checked {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Стили для disabled option */
+        option:disabled {
+            color: #6c757d;
+            background-color: #e9ecef;
+        }
+
+        /* Кастомный скролл для select */
+        select::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        select::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 0 0.25rem 0.25rem 0;
+        }
+
+        select::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 4px;
+        }
+
+        select::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
+        }
+    </style>
+
 </body>
 
 </html>
