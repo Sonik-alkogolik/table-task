@@ -85,17 +85,19 @@ function deleteData($conn, $tableName, $data) {
 }
 
 function updateData($conn, $tableName, $data) {
+    var_dump($data);
     $id = $data['id'];
     $name = $data['name'];
     $provider = $data['providers'];
-    $product_fileds = $data['full_data']['product_fileds'];
-    var_dump($product_fields);
+    $product_fileds = $data['full_data'];
+    $product_fileds_json = json_encode($product_fileds, JSON_UNESCAPED_UNICODE);
+   
 
 
     $sql = "UPDATE `$tableName` SET 
     `user` = '$name', 
     `providers` = '$provider', 
-    `product_fileds` = '$product_fileds' 
+    `product_fileds` = '$product_fileds_json' 
     WHERE `id` = '$id'";
 
     if (!$conn->query($sql)) {

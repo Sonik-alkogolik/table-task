@@ -1,6 +1,6 @@
 <?php
 function connectDB() {
-    $host = 'MySQL-8.0';
+    $host = 'MySQL-5.7';
     $user = 'root';
     $password = ''; 
     $dbname = 'tabel_fields';
