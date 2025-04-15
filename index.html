@@ -11,9 +11,9 @@
 
 <body>
     <div id="app" class="container mt-4">
-        <button @click="add_item" class="btn btn-primary mb-3">
+        <!-- <button @click="add_item" class="btn btn-primary mb-3">
             Добавить запись
-        </button>
+        </button> -->
 
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
@@ -108,15 +108,29 @@
                         </option>
                       </select>
                   </div>
-                  <div class="form-group mb-3">
-                    {{ selectedEditItem.data.product_fileds }}
-                    <div 
-                      v-for="(item_select, key) in selectedEditItem.data.product_fileds.total" 
-                      :key="key"
-                    >
-                      {{ key }}
+                  <div>
+                    <div v-for="(value, key) in parsedProductFields" :key="key" class="form-group">
+                      <label>{{ key }}</label>
+                      <input
+                        v-if="fieldTypes[key] === 'input'"
+                        v-model="parsedProductFields[key]"
+                        type="text"
+                        class="form-control"
+                      >
+
+                      <select
+                        v-else-if="fieldTypes[key] === 'select'"
+                        v-model="parsedProductFields[key]"
+                        class="form-control"
+                      >
+
+                        <option v-for="option in options[key]" :value="option.value" :key="option.id">
+                          {{ option.value }}
+                        </option>
+                      </select>
                     </div>
                   </div>
+                  
                   
                 <button type="submit" class="btn btn-success">Сохранить</button>
                 <button @click="selectedEditItem = null" class="btn btn-danger">Отмена</button>
@@ -139,11 +153,38 @@
                     full_data:{},
                     name: '',
                     selectedEditItem: {},
+                    parsedProductFields: {},
+                    fieldTypes: {
+                        total: 'input',
+                        country: 'select',
+                        currency: 'select',
+                        messanger: 'input',
+                        payment_purpose: 'input'
+                    },
+                    country: [
+                        { id: "de", value: "Германия" },
+                        { id: "cn", value: "Китай" },
+                        { id: "us", value: "США" },
+                        { id: "other", value: "Другое" }
+                    ],
+
+                    currency: [
+                        { id: "rub", value: "RUB" },
+                        { id: "usd", value: "USD" },
+                        { id: "eur", value: "EUR" },
+                        { id: "cny", value: "CNY" }
+                    ],
+                    options: {},
                 };
             },
             async mounted() {
                 await this.read();
                 await this.form_item();
+                
+                this.options = {
+                    country: this.country,
+                    currency: this.currency
+                };
             },
             methods: {
                 async read() {
@@ -244,14 +285,11 @@
                      const data_edit_item = await response.json();
                      //console.log(data_edit_item);
                      this.selectedEditItem = data_edit_item;  
-                    //console.log(this.selectedEditItem);
-                     
-                    // this.selectedEditItem = this.ReadTable.data.find(item => item.id === id);
-                    // // this.selectedEditItem.product_fileds.country = data.country || '';
-                    // // this.selectedEditItem.product_fileds.currency = data.currency || '';
-                    // // this.selectedEditItem.product_fileds.messanger = data.messanger || '';
-
-                    // console.log('Selected item:', this.selectedEditItem);
+                    // Парсим product_fileds
+                    if (this.selectedEditItem?.data?.product_fileds) {
+                        this.parsedProductFields = JSON.parse(this.selectedEditItem.data.product_fileds);
+                    }
+                    
                 },
                 async updateItem() {
                     try {
@@ -266,8 +304,8 @@
                         });
                         
                         if (!response.ok) throw new Error('Ошибка обновления');
-                        await this.read(); // Обновить список данных
-                        this.selectedEditItem = null; // Закрыть форму
+                        await this.read(); 
+                        this.selectedEditItem = null;
                         
                     } catch (error) {
                         console.error('Ошибка:', error);
