@@ -103,8 +103,8 @@
                   <div class="form-group mb-3">
                     <label class="form-label">Метод оплаты:</label>
                     <select class="form-select" v-model="selectedEditItem.data.providers" name="payment_method">
-                        <option>
-                          {{ selectedEditItem.data.providers }}
+                        <option v-for="provider in providers" :key="provider.id" :value="provider.id">
+                          {{ provider.value }}
                         </option>
                       </select>
                   </div>
@@ -132,7 +132,7 @@
                   </div>
                   
                   
-                <button type="submit" class="btn btn-success">Сохранить</button>
+                <button @click="updateItem($event)"  class="btn btn-success">Сохранить</button>
                 <button @click="selectedEditItem = null" class="btn btn-danger">Отмена</button>
             </form>
         </div>
@@ -161,6 +161,10 @@
                         messanger: 'input',
                         payment_purpose: 'input'
                     },
+                    providers: [
+                        {id:"swift", value:"swift"},
+                        {id:"usdt", value:"usdt"},
+                    ],
                     country: [
                         { id: "de", value: "Германия" },
                         { id: "cn", value: "Китай" },
@@ -291,27 +295,37 @@
                     }
                     
                 },
-                async updateItem() {
+                async updateItem(event) {
+                    event.preventDefault();
+
+                    console.log('Измененные поля:', this.selectedEditItem);
+                    console.log(this.selectedEditItem.data.product_fileds);
+                    
+
                     try {
                         const response = await fetch('/function.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'update',
-                            id: this.selectedEditItem.id,
-                            data: this.selectedEditItem
-                        })
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'update',
+                                id: this.selectedEditItem.data.id,
+                                name:this.selectedEditItem.data.user,
+                                providers:this.selectedEditItem.data.providers,
+                                full_data: this.selectedEditItem.data.product_fileds
+                            })
                         });
-                        
+
                         if (!response.ok) throw new Error('Ошибка обновления');
-                        await this.read(); 
-                        this.selectedEditItem = null;
                         
+                        // await this.read();
+                        // this.selectedEditItem = null;
+
                     } catch (error) {
                         console.error('Ошибка:', error);
                         alert(error.message);
                     }
                 },
+
                async deleteItem(id) {
                     if (confirm('Вы уверены, что хотите удалить запись?')) {
                         try {

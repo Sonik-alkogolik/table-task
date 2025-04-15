@@ -84,11 +84,33 @@ function deleteData($conn, $tableName, $data) {
     return ['error' => $stmt->error];
 }
 
+function updateData($conn, $tableName, $data) {
+    $id = $data['id'];
+    $name = $data['name'];
+    $provider = $data['providers'];
+    $product_fileds = $data['full_data']['product_fileds'];
+    var_dump($product_fields);
+
+
+    $sql = "UPDATE `$tableName` SET 
+    `user` = '$name', 
+    `providers` = '$provider', 
+    `product_fileds` = '$product_fileds' 
+    WHERE `id` = '$id'";
+
+    if (!$conn->query($sql)) {
+        return ['error' => $conn->error];
+    }
+
+    $conn->close();
+    
+    return ['success' => true];
+}
+
 switch ($action) {
     case 'readData':
         echo readData($conn, $tableName);
         break;
-    
     case 'create':
         $result = createData($conn,$tableName,$data);
         echo json_encode($result);
@@ -99,6 +121,9 @@ switch ($action) {
         break;
     case 'delete':
         echo json_encode(deleteData($conn, $tableName, $data));
+        break;
+    case 'update':
+        echo json_encode(updateData($conn, $tableName, $data));
         break;
     default:
         echo json_encode(["error" => "Unknown action"]);
